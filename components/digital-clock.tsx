@@ -1,28 +1,30 @@
-"use client";
-import { useState, useEffect,useMemo} from "react";
-import { Button } from "./ui/button";
-import { Card } from "./ui/card";
+"use client"; // Enables client-side rendering for this component
 
+// Import necessary hooks from React
+import { useState, useEffect, useMemo } from "react";
 
-export default function DigitalClockComponent(){
-    const[time,setTime]=useState<Date>(new Date()); //This stores the current date and time.
-    const[is24Hour,setIs24Hour]=useState<boolean>(true) //This variable is used to manage whether the clock should display time in a 24-hour format or a 12-hour format.
-    const[mounted,setMounted]=useState<boolean>(false)  //This tracks whether the component has been successfully mounted. After the component mounts, it is updated to true.
+// Import custom UI components from the UI directory
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 
+// Default export of the DigitalClockComponent function
+export default function DigitalClockComponent() {
+  // State hooks for managing current time, time format (24-hour or 12-hour), and component mount status
+  const [time, setTime] = useState<Date>(new Date());
+  const [is24Hour, setIs24Hour] = useState<boolean>(true);
+  const [mounted, setMounted] = useState<boolean>(false);
 
-useEffect(()=>{
-    setMounted(true);
-    const interval =setInterval(() => {
-        setTime(new Date())
+  // Effect hook to run on component mount
+  useEffect(() => {
+    setMounted(true); // Set mounted status to true
+    const interval = setInterval(() => {
+      setTime(new Date()); // Update the time every second
     }, 1000);
+    return () => clearInterval(interval); // Cleanup the interval on component unmount
+  }, []);
 
-    return clearInterval(interval)  //The interval is cleared to stop further updates when the component is no longer in use
-},[])  //By passing an empty dependency array ([]), the effect runs only once when the component mounts and doesn’t re-run unless the component unmounts.
-
-
-
- // Memoized computation of formatted time to avoid unnecessary recalculations
- const formattedTime = useMemo<string>(() => {
+  // Memoized computation of formatted time to avoid unnecessary recalculations
+  const formattedTime = useMemo<string>(() => {
     if (!mounted) return ""; // Don't render time on the server
     const hours = is24Hour
       ? time.getHours().toString().padStart(2, "0") // Format hours in 24-hour format
@@ -69,8 +71,4 @@ useEffect(()=>{
       </Card>
     </div>
   );
-
 }
-
-
-
